@@ -12,25 +12,23 @@ def start():
     """
     Starts the program and asks user what they would like to do
     """
-    option = -1
-    while option != 0:
+    while True:
         try:
             option = input("What would you like to do?\n\n[0]: Exit\n[1]: Add to timesheet\n[2]: Lookup task\n\n"
                            "Enter your choice: ")
-            if int(option) == 0:
-                break
-            elif int(option) == 1:
-                add_task()
-            elif int(option) == 2:
-                tasks = find_tasks()
-                print_tasks(tasks)
+            if int(option) == 0:  # exit
+                exit()
+            elif int(option) == 1:  # add to timesheet
+                add_to_timesheet()
+            elif int(option) == 2:  # lookup task
+                print_tasks(find_tasks())
             else:
                 raise ValueError
         except ValueError:
             print("\nNot a valid option; enter 0, 1, or 2\n")
 
 
-def add_task():
+def add_to_timesheet():
     """
     Adds a task to the timesheet
     """
@@ -99,6 +97,52 @@ def is_date(string) -> bool:
         return False
 
 
+def get_input_search_method() -> int:
+    while True:
+        try:
+            selection = input("\nEnter a search method.\n\n"
+                              "[0]: find by date\n"
+                              "[1]: find by time spent\n"
+                              "[2]: find by exact search\n"
+                              "[3]: find by pattern\n\n"
+                              "Enter your choice: ")
+            selection = int(selection)
+            if selection == 0 or selection == 1 or selection == 2 or selection == 3:
+                return selection
+            else:
+                raise ValueError
+        except ValueError:
+            print("\nNot a valid option; enter 0, 1, 2, or 3")
+
+
+def get_input_date() -> str:
+    while True:
+        try:
+            query = parse(input("\nEnter a date (e.g. MM/DD/YYYY): "))
+            break
+        except ValueError:
+            print("\nNot a valid date (e.g. MM/DD/YYYY)")
+    return str(query)
+
+
+def get_input_time_spent() -> str:
+    while True:
+        try:
+            query = int(input("\nEnter time spent in minutes: "))
+            break
+        except ValueError:
+            print("\nNot a valid time. Only enter numbers.\n")
+    return str(query)
+
+
+def get_input_exact_search() -> str:
+    return input("\nEnter a search query: ")
+
+
+def get_task_by_pattern() -> str:
+    return input("\nEnter a regex pattern: ")
+
+
 def find_tasks() -> [Log]:
     """
     Provides a way for a user to find all of the tasks that were done on a certain date or that match a search string
@@ -107,20 +151,33 @@ def find_tasks() -> [Log]:
     :return: an array of found logs
     """
     file.close()
-    query = input("\nEnter a date or search string: ")
     logs = rebuild_data()
     returned_tasks = []
 
-    if is_date(query):
-        for log in logs:
+    input_search_method = get_input_search_method()
+
+    if input_search_method == 0:
+        query = get_input_date()
+    elif input_search_method == 1:
+        query = get_input_time_spent()
+    elif input_search_method == 2:
+        query = get_input_exact_search()
+    elif input_search_method == 3:
+        query = get_task_by_pattern()
+
+    for log in logs:
+        if input_search_method is 0:  # if true, query is a date
             if parse(query) == parse(log.date):
                 returned_tasks.append(log)
-    else:
-        for log in logs:
-            if re.search(r'{}'.format(query), log.name, re.I) \
-                    or re.search(r'{}'.format(query), log.time_spent, re.I) \
-                    or re.search(r'{}'.format(query), log.notes, re.I):
+        elif input_search_method is 1:  # if true, query is for time spent
+            if int(query) == int(log.time_spent):
                 returned_tasks.append(log)
+        elif input_search_method is 2 or input_search_method is 3:  # if true, query is for exact match
+            print("doing this")
+            if re.search(r'{}'.format(query), log.name) is not None \
+                    or re.search(r'{}'.format(query), log.notes) is not None:
+                returned_tasks.append(log)
+
     return returned_tasks
 
 
