@@ -173,7 +173,6 @@ def find_tasks() -> [Log]:
             if int(query) == int(log.time_spent):
                 returned_tasks.append(log)
         elif input_search_method is 2 or input_search_method is 3:  # if true, query is for exact match
-            print("doing this")
             if re.search(r'{}'.format(query), log.name) is not None \
                     or re.search(r'{}'.format(query), log.notes) is not None:
                 returned_tasks.append(log)
