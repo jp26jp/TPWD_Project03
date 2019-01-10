@@ -41,7 +41,7 @@ def add_task():
 
     while not valid_int:
         try:
-            task_time = input("Time spent on {}: ".format(task_name))
+            task_time = input("Minutes spent on {}: ".format(task_name))
             task_time = int(task_time)
             valid_int = True
         except ValueError:
