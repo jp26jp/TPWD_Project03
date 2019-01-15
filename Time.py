@@ -14,8 +14,12 @@ def start():
     """
     while True:
         try:
-            option = input("What would you like to do?\n\n[0]: Exit\n[1]: Add to timesheet\n[2]: Lookup task\n\n"
-                           "Enter your choice: ")
+            option = input(
+                    "What would you like to do?\n\n"
+                    "[0]: Exit\n"
+                    "[1]: Add to timesheet\n"
+                    "[2]: Lookup task\n\n"
+                    "Enter your choice: ")
             if int(option) == 0:  # exit
                 exit()
             elif int(option) == 1:  # add to timesheet
@@ -64,7 +68,8 @@ def write_task_to_file(task):
 
     :param task: the task to be added to the timesheet
     """
-    file.write("{},{},{},{}\n".format(task.name, task.time_spent, task.notes, task.date))
+    file.write("{},{},{},{}\n".format(task.name, task.time_spent, task.notes,
+                                      task.date))
     print("\n{} has been added!\n".format(task.name))
 
 
@@ -79,7 +84,8 @@ def rebuild_data() -> [Log]:
         reader = csv.DictReader(csvFile, delimiter=",")
         logs = list(reader)
     for log in logs:
-        all_logs.append(Log(log["Name"], log["Time spent"], log["Notes"], log["Date"]))
+        all_logs.append(
+                Log(log["Name"], log["Time spent"], log["Notes"], log["Date"]))
     return all_logs
 
 
@@ -107,7 +113,10 @@ def get_input_search_method() -> int:
                               "[3]: find by pattern\n\n"
                               "Enter your choice: ")
             selection = int(selection)
-            if selection == 0 or selection == 1 or selection == 2 or selection == 3:
+            if selection == 0 \
+                    or selection == 1 \
+                    or selection == 2 \
+                    or selection == 3:
                 return selection
             else:
                 raise ValueError
@@ -145,8 +154,9 @@ def get_task_by_pattern() -> str:
 
 def find_tasks() -> [Log]:
     """
-    Provides a way for a user to find all of the tasks that were done on a certain date or that match a search string
-    (either as a regular expression or a plain text search).
+    Provides a way for a user to find all of the tasks that were done on a
+    certain date or that match a search string (either as a regular expression
+    or a plain text search).
 
     :return: an array of found logs
     """
@@ -172,7 +182,8 @@ def find_tasks() -> [Log]:
         elif input_search_method is 1:  # if true, query is for time spent
             if int(query) == int(log.time_spent):
                 returned_tasks.append(log)
-        elif input_search_method is 2 or input_search_method is 3:  # if true, query is for exact match
+        # if true, query is for exact match
+        elif input_search_method is 2 or input_search_method is 3:
             if re.search(r'{}'.format(query), log.name) is not None \
                     or re.search(r'{}'.format(query), log.notes) is not None:
                 returned_tasks.append(log)
@@ -182,7 +193,8 @@ def find_tasks() -> [Log]:
 
 def print_tasks(tasks):
     """
-    Prints a report of retrieved tasks to the screen, including the date, title of task, time spent, and general notes.
+    Prints a report of retrieved tasks to the screen, including the date,
+    title of task, time spent, and general notes.
 
     :param tasks: tasks that were found
     """
